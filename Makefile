@@ -3,7 +3,7 @@ ROOTDIR=$(DESTDIR)
 LIBDIR=/usr/lib/
 SBINDIR=/sbin
 CONFDIR=/etc/iproute2
-DOCDIR=/share/doc/iproute2
+# DOCDIR=/share/doc/iproute2
 MANDIR=/share/man
 ARPDDIR=/var/lib/arpd
 
@@ -35,7 +35,7 @@ YACCFLAGS = -d -t -v
 
 LDLIBS += -L../lib -lnetlink -lutil
 
-SUBDIRS=lib ip tc misc netem genl
+SUBDIRS=lib misc
 
 LIBNETLINK=../lib/libnetlink.a ../lib/libutil.a
 
@@ -51,12 +51,12 @@ install: all
 	install -m 0755 -d $(DESTDIR)$(SBINDIR)
 	install -m 0755 -d $(DESTDIR)$(CONFDIR)
 	install -m 0755 -d $(DESTDIR)$(ARPDDIR)
-	install -m 0755 -d $(DESTDIR)$(DOCDIR)/examples
-	install -m 0755 -d $(DESTDIR)$(DOCDIR)/examples/diffserv
-	install -m 0644 README.iproute2+tc $(shell find examples -maxdepth 1 -type f) \
-		$(DESTDIR)$(DOCDIR)/examples
-	install -m 0644 $(shell find examples/diffserv -maxdepth 1 -type f) \
-		$(DESTDIR)$(DOCDIR)/examples/diffserv
+	# install -m 0755 -d $(DESTDIR)$(DOCDIR)/examples
+	# install -m 0755 -d $(DESTDIR)$(DOCDIR)/examples/diffserv
+	# install -m 0644 README.iproute2+tc $(shell find examples -maxdepth 1 -type f) \
+	# 	$(DESTDIR)$(DOCDIR)/examples
+	# install -m 0644 $(shell find examples/diffserv -maxdepth 1 -type f) \
+	# 	$(DESTDIR)$(DOCDIR)/examples/diffserv
 	@for i in $(SUBDIRS) doc; do $(MAKE) -C $$i install; done
 	install -m 0644 $(shell find etc/iproute2 -maxdepth 1 -type f) $(DESTDIR)$(CONFDIR)
 	install -m 0755 -d $(DESTDIR)$(MANDIR)/man8
@@ -75,7 +75,7 @@ snapshot:
 
 clean:
 	rm -f cscope.*
-	@for i in $(SUBDIRS) doc; \
+	@for i in $(SUBDIRS); \
 	do $(MAKE) $(MFLAGS) -C $$i clean; done
 
 clobber:
