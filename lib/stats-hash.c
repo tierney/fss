@@ -24,8 +24,6 @@
 #include <string.h>
 #include <sys/time.h>
 
-#include "config.h"
-
 #define INITIAL_HASH_SZ     2053
 #define MAX_LOAD_PERCENT    65
 
@@ -286,15 +284,13 @@ static unsigned long
 hash_fun(uint32_t laddr, uint32_t raddr, uint16_t lport, uint16_t rport) {
     unsigned long ret;
     
-#if SIZEOF_UNSIGNED_LONG >= 8
+#if __LP64__
     ret = ((uint64_t) laddr << 32) | raddr;
     ret ^= ((uint64_t) lport << 48) | ((uint64_t) rport << 32) |
             ((uint64_t) lport << 16) | rport;
-#elif SIZEOF_UNSIGNED_LONG == 4
+#else
     ret = laddr ^ raddr;
     ret ^= (lport << 16) | rport;
-#else
-#error Cannot determine sizeof(unsigned long)
 #endif    
 
     return ret;

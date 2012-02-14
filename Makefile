@@ -22,7 +22,7 @@ LDLIBS=-lresolv
 ADDLIB=
 
 #options for decnet
-ADDLIB+=dnet_ntop.o dnet_pton.o
+ADDLIB+=dnet_ntop.o dnet_pton.o stats-hash.o stats.o
 
 #options for ipx
 ADDLIB+=ipx_ntop.o ipx_pton.o
@@ -35,7 +35,7 @@ YACCFLAGS = -d -t -v
 
 LDLIBS += -L../lib -lnetlink -lutil
 
-SUBDIRS=lib misc
+SUBDIRS=lib src
 
 LIBNETLINK=../lib/libnetlink.a ../lib/libutil.a
 
@@ -86,6 +86,6 @@ clobber:
 distclean: clobber
 
 cscope:
-	cscope -b -q -R -Iinclude -sip -slib -smisc -snetem -stc
+	cscope -b -q -R -Iinclude -sip -slib -ssrc -snetem -stc
 
 .EXPORT_ALL_VARIABLES:

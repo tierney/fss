@@ -32,6 +32,7 @@
 #include "ll_map.h"
 #include "libnetlink.h"
 #include "SNAPSHOT.h"
+#include "stats-hash.h"
 
 #include <netinet/tcp.h>
 #include <linux/inet_diag.h>
@@ -2506,6 +2507,10 @@ int main(int argc, char *argv[])
 	int ch;
 
 	memset(&current_filter, 0, sizeof(current_filter));
+
+	// TODO(tierney): Testing the stats-hash.h library.
+	struct hash* h = hash_new();
+	struct timeval tv;
 
 	current_filter.states = default_filter.states;
 
