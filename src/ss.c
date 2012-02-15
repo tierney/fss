@@ -32,7 +32,12 @@
 #include "ll_map.h"
 #include "libnetlink.h"
 #include "SNAPSHOT.h"
+
+#include <sys/types.h>
+#include <time.h>
 #include "stats-hash.h"
+#include "serialize.h"
+#include "tcp_info.pb-c.h"
 
 #include <netinet/tcp.h>
 #include <linux/inet_diag.h>
@@ -45,6 +50,8 @@ int show_details = 0;
 int show_users = 0;
 int show_mem = 0;
 int show_tcpinfo = 0;
+int continuous = 0;
+struct timespec ts_mono, ts_rt;
 
 int netid_width;
 int state_width;
@@ -1481,8 +1488,12 @@ static int tcp_show_netlink(struct filter *f, FILE *dump_fp, int socktype)
 	char	buf[8192];
 	struct iovec iov[3];
 
-	if ((fd = socket(AF_NETLINK, SOCK_RAW, NETLINK_INET_DIAG)) < 0)
+	if ((fd = socket(AF_NETLINK, SOCK_RAW, NETLINK_INET_DIAG)) < 0) {
+		int errsv = errno;
+		printf("Error: %d.\n", errsv);
 		return -1;
+	}
+
 
 	memset(&nladdr, 0, sizeof(nladdr));
 	nladdr.nl_family = AF_NETLINK;
@@ -1531,6 +1542,9 @@ static int tcp_show_netlink(struct filter *f, FILE *dump_fp, int socktype)
 		.iov_base = buf,
 		.iov_len = sizeof(buf)
 	};
+			printf("TIMESTAMP\n");
+			printf("%ld ns:%ld \n", ts_mono.tv_sec, ts_mono.tv_nsec);
+			printf("s: %ld ns:%ld \n", ts_rt.tv_sec, ts_rt.tv_nsec);
 
 	while (1) {
 		int status;
@@ -1561,6 +1575,10 @@ static int tcp_show_netlink(struct filter *f, FILE *dump_fp, int socktype)
 
 		h = (struct nlmsghdr*)buf;
 		while (NLMSG_OK(h, status)) {
+			// TODO(tierney): Record the time here, when we reeive the message.
+			clock_gettime(CLOCK_MONOTONIC_RAW, &ts_mono);
+			clock_gettime(CLOCK_REALTIME, &ts_rt);
+
 			int err;
 			struct inet_diag_msg *r = NLMSG_DATA(h);
 
@@ -1568,8 +1586,9 @@ static int tcp_show_netlink(struct filter *f, FILE *dump_fp, int socktype)
 			    h->nlmsg_seq != 123456)
 				goto skip_it;
 
-			if (h->nlmsg_type == NLMSG_DONE)
+			if (h->nlmsg_type == NLMSG_DONE) {
 				return 0;
+			}
 			if (h->nlmsg_type == NLMSG_ERROR) {
 				struct nlmsgerr *err = (struct nlmsgerr*)NLMSG_DATA(h);
 				if (h->nlmsg_len < NLMSG_LENGTH(sizeof(struct nlmsgerr))) {
@@ -1602,6 +1621,7 @@ skip_it:
 			exit(1);
 		}
 	}
+		close(fd);
 	return 0;
 }
 
@@ -1801,6 +1821,8 @@ int dgram_show_line(char *line, const struct filter *f, int family)
 	if (n < 9)
 		opt[0] = 0;
 
+
+
 	if (netid_width)
 		printf("%-*s ", netid_width, dg_proto);
 	if (state_width)
@@ -1970,6 +1992,7 @@ void unix_list_print(struct unixstat *list, struct filter *f)
 		if (netid_width)
 			printf("%-*s ", netid_width,
 			       s->type == SOCK_STREAM ? "u_str" : "u_dgr");
+
 		if (state_width)
 			printf("%-*s ", state_width, sstate_name[s->state]);
 		printf("%-6d %-6d ", s->rq, s->wq);
@@ -2394,6 +2417,7 @@ static void _usage(FILE *dest)
 	fprintf(dest,
 "Usage: ss [ OPTIONS ]\n"
 "       ss [ OPTIONS ] [ FILTER ]\n"
+"   -g, --continuous     continuous display data\n"
 "   -h, --help		this message\n"
 "   -V, --version	output version information\n"
 "   -n, --numeric	don't resolve service names\n"
@@ -2509,14 +2533,23 @@ int main(int argc, char *argv[])
 	memset(&current_filter, 0, sizeof(current_filter));
 
 	// TODO(tierney): Testing the stats-hash.h library.
+	Fss__TcpInfo mytcpinfo = FSS__TCP_INFO__INIT;
+
 	struct hash* h = hash_new();
-	struct timeval tv;
 
-	current_filter.states = default_filter.states;
+  current_filter.states = default_filter.states;
 
-	while ((ch = getopt_long(argc, argv, "dhaletuwxnro460spf:miA:D:F:vV",
+	while ((ch = getopt_long(argc, argv, "gdhaletuwxnro460spf:miA:D:F:vV",
 				 long_opts, NULL)) != EOF) {
 		switch(ch) {
+		case 'g':
+			show_tcpinfo = 1;
+			show_mem = 1;
+			show_options = 1;
+			show_details++;
+			resolve_services = 0;
+			continuous = 1;
+			break;
 		case 'n':
 			resolve_services = 0;
 			break;
@@ -2851,7 +2884,9 @@ int main(int argc, char *argv[])
 	if (current_filter.dbs & (1<<UDP_DB))
 		udp_show(&current_filter);
 	if (current_filter.dbs & (1<<TCP_DB))
-		tcp_show(&current_filter, TCPDIAG_GETSOCK);
+		do {
+			tcp_show(&current_filter, TCPDIAG_GETSOCK);
+		} while (continuous == 1);
 	if (current_filter.dbs & (1<<DCCP_DB))
 		tcp_show(&current_filter, DCCPDIAG_GETSOCK);
 	return 0;

@@ -1,6 +1,7 @@
 CFLAGS += -fPIC
 
-UTILOBJ=utils.o rt_names.o ll_types.o ll_proto.o ll_addr.o inet_proto.o
+UTILOBJ=utils.o rt_names.o ll_types.o ll_proto.o ll_addr.o inet_proto.o \
+	serialize.o
 
 NLOBJ=ll_map.o libnetlink.o
 

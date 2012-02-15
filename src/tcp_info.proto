@@ -1,0 +1,45 @@
+package fss;
+
+message tcp_info
+{
+  required int32 seconds = 1;
+  required int64 nanoseconds = 2;
+  optional uint32 tcpi_state = 3;
+  optional uint32	tcpi_ca_state = 4;
+  optional uint32	tcpi_retransmits = 5;
+  optional uint32	tcpi_probes = 6;
+  optional uint32	tcpi_backoff = 7;
+  optional uint32	tcpi_options = 8;
+  optional uint32	tcpi_snd_wscale = 9;
+  optional uint32 tcpi_rcv_wscale = 10;
+
+  optional uint32	tcpi_rto = 11;
+  optional uint32	tcpi_ato = 12;
+  optional uint32	tcpi_snd_mss = 13;
+  optional uint32	tcpi_rcv_mss = 14;
+
+  optional uint32	tcpi_unacked = 15;
+  optional uint32	tcpi_sacked = 16;
+  optional uint32	tcpi_lost = 17;
+  optional uint32	tcpi_retrans = 18;
+  optional uint32	tcpi_fackets = 19;
+
+  /* Times. */
+  optional uint32	tcpi_last_data_sent = 20;
+  optional uint32	tcpi_last_ack_sent = 21;	/* Not remembered, sorry */
+  optional uint32	tcpi_last_data_recv = 22;
+  optional uint32	tcpi_last_ack_recv = 23;
+
+  /* Metrics. */
+  optional uint32	tcpi_pmtu = 24;
+  optional uint32	tcpi_rcv_ssthresh = 25;
+  optional uint32	tcpi_rtt = 26;
+  optional uint32	tcpi_rttvar = 27;
+  optional uint32	tcpi_snd_ssthresh = 28;
+  optional uint32	tcpi_snd_cwnd = 29;
+  optional uint32	tcpi_advmss = 30;
+  optional uint32	tcpi_reordering = 31;
+  optional uint32	tcpi_rcv_rtt = 32;
+  optional uint32	tcpi_rcv_space = 33;
+  optional uint32	tcpi_total_retrans = 34;
+}

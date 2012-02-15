@@ -1,6 +1,7 @@
 DESTDIR=/usr/
 ROOTDIR=$(DESTDIR)
 LIBDIR=/usr/lib/
+LOCALLIBDIR=/usr/local/lib
 SBINDIR=/sbin
 CONFDIR=/etc/iproute2
 # DOCDIR=/share/doc/iproute2
@@ -29,11 +30,11 @@ ADDLIB+=ipx_ntop.o ipx_pton.o
 
 CC = gcc
 HOSTCC = gcc
-CCOPTS = -D_GNU_SOURCE -O2 -Wstrict-prototypes -Wall
-CFLAGS = $(CCOPTS) -I../include $(DEFINES)
+CCOPTS = -D_GNU_SOURCE -O0 -g -Wstrict-prototypes -Wall
+CFLAGS = $(CCOPTS) -I../include -I/usr/include -I. $(DEFINES)
 YACCFLAGS = -d -t -v
 
-LDLIBS += -L../lib -lnetlink -lutil
+LDLIBS += -L../lib -lnetlink -lutil -lrt -L/usr/local/lib/ -lprotobuf-c
 
 SUBDIRS=lib src
 
