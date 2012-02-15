@@ -1490,7 +1490,13 @@ static int tcp_show_netlink(struct filter *f, FILE *dump_fp, int socktype)
 
 	if ((fd = socket(AF_NETLINK, SOCK_RAW, NETLINK_INET_DIAG)) < 0) {
 		int errsv = errno;
-		printf("Error: %d.\n", errsv);
+		switch (errno) {
+		case EMFILE:
+			printf("Too many open files.\n");
+			break;
+		default:
+			printf("Error: %d.\n", errsv);
+		}
 		return -1;
 	}
 
@@ -1587,6 +1593,7 @@ static int tcp_show_netlink(struct filter *f, FILE *dump_fp, int socktype)
 				goto skip_it;
 
 			if (h->nlmsg_type == NLMSG_DONE) {
+				close(fd);
 				return 0;
 			}
 			if (h->nlmsg_type == NLMSG_ERROR) {
@@ -1621,7 +1628,9 @@ skip_it:
 			exit(1);
 		}
 	}
-		close(fd);
+	if (close(fd) == -1) {
+		printf("Unable to close socket: %d\n.", errno);
+	}
 	return 0;
 }
 
