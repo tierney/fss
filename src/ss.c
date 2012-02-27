@@ -37,7 +37,6 @@
 #include <time.h>
 #include "stats-hash.h"
 #include "serialize.h"
-#include "tcp_info.pb-c.h"
 
 #include <netinet/tcp.h>
 #include <linux/inet_diag.h>
