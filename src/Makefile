@@ -1,14 +1,11 @@
 SSOBJ=ss.o ssfilter.o
 LNSTATOBJ=lnstat.o lnstat_util.o
 
-TARGETS=protoc_middleman ss
+TARGETS=ss
 
 include ../Config
 
 all: $(TARGETS)
-
-protoc_middleman: tcp_info.proto
-	protoc-c --c_out=. tcp_info.proto
 
 ss: $(SSOBJ) $(LIBUTIL) tcp_info.pb-c.c
 

@@ -34,7 +34,7 @@ CCOPTS = -D_GNU_SOURCE -O0 -g -Wstrict-prototypes -Wall
 CFLAGS = $(CCOPTS) -I../include -I/usr/include -I. $(DEFINES)
 YACCFLAGS = -d -t -v
 
-LDLIBS += -L../lib -lnetlink -lutil -lrt -L/usr/local/lib/ -lprotobuf-c
+LDLIBS += -L../lib -lnetlink -lutil -lrt -L/usr/local/lib/
 
 SUBDIRS=lib src
 
