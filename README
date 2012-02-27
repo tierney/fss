@@ -1,0 +1,12 @@
+Allows ss (socket statistics) to continously output microsecond timestamped
+procfs information about current TCP connections. Based on iproute2 "ss -
+another utility to investigate sockets."
+
+Usage:
+
+  ss -g
+
+Install:
+
+  ./configure
+  make
