@@ -7,7 +7,7 @@ include ../Config
 
 all: $(TARGETS)
 
-ss: $(SSOBJ) $(LIBUTIL) tcp_info.pb-c.c
+ss: $(SSOBJ) $(LIBUTIL)
 
 install: all
 	install -m 0755 $(TARGETS) $(DESTDIR)$(SBINDIR)
@@ -15,4 +15,4 @@ install: all
 	ln -sf lnstat $(DESTDIR)$(SBINDIR)/ctstat
 
 clean:
-	rm -f *.o $(TARGETS) ssfilter.c protoc_middleman *.pb-c.*
+	rm -f *.o $(TARGETS) ssfilter.c

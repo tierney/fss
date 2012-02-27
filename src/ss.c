@@ -2540,11 +2540,6 @@ int main(int argc, char *argv[])
 
 	memset(&current_filter, 0, sizeof(current_filter));
 
-	// TODO(tierney): Testing the stats-hash.h library.
-	Fss__TcpInfo mytcpinfo = FSS__TCP_INFO__INIT;
-
-	struct hash* h = hash_new();
-
   current_filter.states = default_filter.states;
 
 	while ((ch = getopt_long(argc, argv, "gdhaletuwxnro460spf:miA:D:F:vV",
