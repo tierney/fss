@@ -1548,8 +1548,8 @@ static int tcp_show_netlink(struct filter *f, FILE *dump_fp, int socktype)
 		.iov_len = sizeof(buf)
 	};
 			printf("TIMESTAMP\n");
-			printf("%ld ns:%ld \n", ts_mono.tv_sec, ts_mono.tv_nsec);
-			printf("s: %ld ns:%ld \n", ts_rt.tv_sec, ts_rt.tv_nsec);
+			printf("mono\t%ld\t%ld\n", ts_mono.tv_sec, ts_mono.tv_nsec);
+			printf("real\t%ld\t%ld\n", ts_rt.tv_sec, ts_rt.tv_nsec);
 
 	while (1) {
 		int status;
