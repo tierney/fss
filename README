@@ -8,5 +8,21 @@ Usage:
 
 Install:
 
+  sudo apt-get install iptables-dev
   ./configure
   make
+
+Output:
+
+When using the -g option, ss will output data like the following example. The
+delimiter between continuous procfs reads is the TIMESTAMP keyword. mono and
+real correspond to the timestamps logged using clock_gettime (see `man 2
+clock_gettime`).
+
+  TIMESTAMP
+  mono	1296043	253642430
+  real	1330444244	341364392
+  ESTAB      0      0                                                                              216.165.108.71:44923                                                                         74.125.113.105:443    timer:(keepalive,37sec,0) uid:1046 ino:31840194 sk:ffff8801e3e50000
+     mem:(r0,w0,f0,t0) ts sack cubic wscale:6,7 rto:228 rtt:31/13 ato:40 send 731.9Kbps rcv_rtt:26 rcv_space:45800
+  ESTAB      0      0                                                                            216.165.108.71:52953                                                                          72.247.238.10:www      timer:(keepalive,22sec,0) users:(("chrome",537,215)) uid:1046 ino:31855725 sk:ffff8801e3ece540
+     mem:(r0,w0,f0,t0) ts sack cubic wscale:2,7 rto:204 rtt:6.5/7 ato:40 cwnd:3 send 5.3Mbps rcv_rtt:32 rcv_space:14600
